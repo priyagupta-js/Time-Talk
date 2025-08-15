@@ -1,5 +1,7 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
+const db = mongoose();
 const PORT = 3000;
 
 // dummy request
