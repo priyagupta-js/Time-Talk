@@ -15,12 +15,12 @@ mongoose.connect("mongodb://127.0.0.1:27017/userDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.log("❌ DB Connection Error:", err));
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("DB Connection Error:", err));
 
 // Start Server
-app.listen(3000, () => {
-    console.log("Server running on port 5000");
+app.listen(PORT, () => {
+    console.log("Server running on port 3000");
 });
 
 // // dummy request
