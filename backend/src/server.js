@@ -2,15 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
 const app = express();
-const db = mongoose();
+
 const PORT = 3000;
 
-// Middleware
+// // Middleware
 app.use(express.json());
 app.use(cors());
 
 
-// MongoDB Connection
+// // MongoDB Connection
 mongoose.connect("mongodb://127.0.0.1:27017/userDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -36,19 +36,10 @@ app.listen(PORT, () => {
 // app.put('/items/:id',(req,res)=>{
 //     res.send("Get a put request");
 // })
-// app.delete('/delete/:id',(req,res) =>{
+// app.delete('/items/:id',(req,res) =>{
 //     res.send("Get a delete request");
 // })
-// app or server
+// // app or server
 // app.listen(PORT, () =>{
 //     console.log("Server has started");
 // });
-
-
-
-
-
-
-
-
-
