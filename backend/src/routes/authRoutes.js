@@ -24,7 +24,6 @@ try{
 router.post('/users', async(req,res) =>
 {
     console.log("Received request for POST method");
-    console.log(req.body);
 try{
     const {name,age,weight} = req.body;
     const newuser = new User({name,age,weight});
@@ -44,6 +43,68 @@ try{
 })
 
 module.exports = router;
+
+
+router.put('./users/:id' , async(req,res)=>{
+    const {id} = req.params;
+    const {name, age,weight} = req.body;
+    try{
+        const updateUser = await User.findByIdAndUpdate(id , {name,age,weight});
+
+        if(!updateUser)
+        {
+            res.json({
+                message:"User not found"
+            });
+
+        }
+        // but if found -> update the user
+       res.status.json(
+        {
+            success:true,
+            user:updateUser,
+        })
+    }
+    catch(err)
+    {
+        res.status(500).json(
+            {
+                success:false,
+                message:err.message,
+            }
+        )
+    }
+})
+
+router.delete('./users/:id', async(req,res)=>{
+    const id = req.params;
+    try{
+        const deletedUser = await User.findByIdAndDelete(id);
+        if(!deletedUser)
+        {
+            res.json({
+                message:"User not found"
+            });
+
+        }
+        // but if found -> update the user
+       res.status.json(
+        {
+            success:true,
+            user:deletedUser,
+        })
+    
+    }
+    catch(err)
+    {
+        res.status(500).json(
+            {
+                success:false,
+                message:err.message,
+            }
+        )
+    }
+})
 // request types -> get / put / post / delete
 // path -> / , /about , /blog
 
