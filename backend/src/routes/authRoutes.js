@@ -1,13 +1,8 @@
+import bycrpt from 'bcryptjs';
+import User from '../models/UsersModel';
 const express = require('express');
 const router = express.Router();
-const User = require('../models/UsersModel');
 
-
-// routes 
-
-// middleware
-
-// CRUD operations
 
 router.get('/users', async(req,res) =>
 {

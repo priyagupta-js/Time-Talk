@@ -1,21 +1,32 @@
+
 const { Schema,model} = require("mongoose");
 
 const UserSchema = new Schema({
   name: {
     type: String,
     required: true,
-    maxlength: 50
+    trim:true
   },
-  age :{
-    type:Number,
+  username :{
+    type:String,
     required:true,
-    maxlength:4
+    unique:true,
+    lowercase:true,
+    trim:true
   },
-  weight:{
-    type:Number,
+email:{
+     type: String,
+    required: true,
+    lowercase:true,
+    trim:true
+  },
+  passwordHash:{
+    type:String,
     required:true,
-    maxlength:4
   },
+},
+{
+timestamps:true
 });
 
 const userModel = model("user", UserSchema);
