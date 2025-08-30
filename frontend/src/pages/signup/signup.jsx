@@ -15,6 +15,33 @@ async function handleSignUp()
 {
   e.preventDefault();
   setError("");
+
+  if(!name || !username || !password)
+  {
+    setError("Fields are required");
+  }
+  if (password!=confirm)
+  {
+    setError("Passwords do not match");
+  }
+
+  try{
+    const res = await fetch("http://localhost:5000/api/auth/signup",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name,username,email,password})
+    });
+  const data = await res.json();
+    if (!res.ok) {
+      setError(data.message || "Signup failed");
+      return;
+  }
+  // go to login page
+  navigate("/");
+}
+catch(err){
+setError("Network error");
+}
 }
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-violet-700">

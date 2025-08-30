@@ -5,20 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 const Login =() => {
+  const[username , setUsername] = useState("");
+  const[password, setPassword] = useState("");
 
-const [name,setName] =useState("");
-const [username,setUserame] =useState("");
-const [email,setEmail] = useState("");
-const [password,setPassword] =useState("");
-const [confirm, setConfirm] = useState("");
-const [error, setError] = useState("");
-const navigate = useNavigate();
-
-async function handleSignUp()
-{
-  e.preventDefault();
-  setError("");
-}
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-violet-700">
       <div className="bg-purple-900/70 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md">
