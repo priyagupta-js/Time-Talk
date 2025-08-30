@@ -1,223 +1,81 @@
-import bycrpt from 'bcryptjs';
-import User from '../models/UsersModel';
 const express = require('express');
+const bcrypt = require('bcrypt');
+const User = require('../models/UsersModel')
 const router = express.Router();
 
 
-router.get('/users', async(req,res) =>
-{
-try{
-    const users = await User.find();
-    res.status(200).json(users);
-}catch(err){
-    res.status(500).json({success:false,message:err.message})
-
-}
-})
-
-
-router.post('/users', async(req,res) =>
+// POST /api/auth/signup
+router.post('/signup', async(req,res) =>
 {
     console.log("Received request for POST method");
 try{
-    const {name,age,weight} = req.body;
-    const newuser = new User({name,age,weight});
-    await newuser.save();
-    res.status(200).json({
-        success:true,
-        user:newuser,
+    const {name,username,email,password} = req.body;
+    // basic validation
+    if (!name || !username || !password)
+    {
+        return res.status(400).json({message:"Fields are required"});
+    }
+    // duplicate username
+    const existing = await User.findOne({username:username.toLowerCase()});
+    if(existing)
+    {
+        return res.status(409).json({message:"Uername already exists"});
+    }
+
+    const passwordHash = await bcrypt.hash(password,10);
+
+    // save user 
+    await User.create({
+        name, username:username.toLowerCase(),
+        email,
+        passwordHash
     });
+
+    return res.status(201).json({message: "Account created. Please log in."});
 }catch(err){
+    console.error("Signup error:",err);
     res.status(500).json
     ({
-        success:false,
-        message:err.message
-    })
+    message:"Server error"
+    });
 }
+});
 
-})
+
+// POST /api/auth/login
+router.post("/login",async(req,res) =>{
+    try{
+        const { username,password} = req.body;
+
+        if(!username || !password)
+        {
+            return res.status(400).json({message:"Username and password are required"});
+        }
+
+        const user = await User.findOne({username:username.toLowerCase()});
+        if(!user)
+        {
+            return res.status(400).json({message:"Invalid username or password."});
+        }    
+
+        const ok = await bcrypt.compare(password, user.passwordHash);
+        if(!ok)
+        {
+            return res.status(400).json({message:"Invalid username or password"});
+        }
+        
+    // for now, keep it simple — return success + user summary
+    // later you can issue a JWT and set a cookie
+        return res.status(200).json({
+            message:"Login successful",
+            user:{id:user._id, username: user.username, name:user.name}
+        });
+    }
+    catch(err)
+    {
+        console.error("Login error:",err);
+        return res.status(500).json({message:"Server error"});
+    }
+});
 
 module.exports = router;
-
-
-router.put('./users/:id' , async(req,res)=>{
-    const {id} = req.params;
-    const {name, age,weight} = req.body;
-    try{
-        const updateUser = await User.findByIdAndUpdate(id , {name,age,weight});
-
-        if(!updateUser)
-        {
-            res.json({
-                message:"User not found"
-            });
-
-        }
-        // but if found -> update the user
-       res.status.json(
-        {
-            success:true,
-            user:updateUser,
-        })
-    }
-    catch(err)
-    {
-        res.status(500).json(
-            {
-                success:false,
-                message:err.message,
-            }
-        )
-    }
-})
-
-router.delete('./users/:id', async(req,res)=>{
-    const id = req.params;
-    try{
-        const deletedUser = await User.findByIdAndDelete(id);
-        if(!deletedUser)
-        {
-            res.json({
-                message:"User not found"
-            });
-
-        }
-        // but if found -> update the user
-       res.status.json(
-        {
-            success:true,
-            user:deletedUser,
-        })
-    
-    }
-    catch(err)
-    {
-        res.status(500).json(
-            {
-                success:false,
-                message:err.message,
-            }
-        )
-    }
-})
-// request types -> get / put / post / delete
-// path -> / , /about , /blog
-
-
-// ----------------dummy request----------------------------
-// app.get('/', (req,res) =>{
-//     res.send("Hello World!");
-//     console.log("Received GET request");
-// ----------- to send the file----------------
-// res.sendFile('./filename',{root: __dirname});
-// })
-
-// app.post('/items' , (req,res) =>{
-//     res.send("Get a post request");
-// })
-
-// app.put('/items/:id',(req,res)=>{
-//     res.send("Get a put request");
-// })
-// app.delete('/items/:id',(req,res) =>{
-//     res.send("Get a delete request");
-// })
-// // app or server
-// app.listen(PORT, () =>{
-//     console.log("Server has started");
-// });
-
-// -------------chaining of request---------
-// app.put('/items/:id',(req,res)=>{
-//     res.send("Get a put request");
-// }).delete('/items/:id',(req,res) =>{
-//     res.send("Get a delete request");
-// })
-
-// -----------Using express.Router()------------------
-// const express = require('express');
-// const router = express.Router();
-
-// // app.use(express.json());
-
-// router.get('/',(req,res) =>{
-//     res.send("Got a GET Request");
-// })
-// router.post('/items',(req,res)=>{
-//     res.send("Got a POST request");
-// })
-// router.put('/items/:id',(req,res) =>{
-//     res.send("Got a PUT request")
-// })
-// router.delete('/items/:id',(req,res) =>{
-//     res.send("Got a Delete request")
-// })
-// module.exports = router;
-
-
-// const express = require('express');
-// const router = express.Router();
-
-// // auth middleware
-
-// const auth = function(req,res,next)
-// {
-// console.log("I am inside auth wala middleware");
-
-// req.user = {userId: 1, role:"admin"};
-
-// if(req.user)
-// {
-//     next();
-// }
-// else{
-//     res.json({
-//         success:false,
-//         message:"Not a Valid User",
-//     })
-// }
-// }
-
-// const isStudent = function (req,res,next)
-// {
-//     console.log("I am inside student wala middleware");
-
-//     if(req.user.role === "student")
-//     {
-//         next();
-//     }
-//     else
-//     {
-//         res.json({
-//             success:false,
-//             message:"Access Denied, this route is only for students"
-//         })
-//     }
-// }
-
-// const isAdmin = function(req,res,next) {
-//     console.log("I am inside isAdmin wala middleware");
-
-//     if (req.user.role === "admin")
-//     {
-//         next();
-//     }
-//     else
-//     {
-//         res.json({
-//             success:false,
-//             message:"Access Denied, this route is only for Admins"
-//         })
-//     }
-// }
-
-// router.get('/students' , auth , isStudent, (req,res) =>{
-// console.log("I am inside student route");
-// res.send("Students specific page");
-// })
-
-// router.get("/admin" , auth , isAdmin , (req,res)=>{
-// console.log("I am inside Admin route");
-// res.send("Admin specific page");
-// })
-// module.exports = router

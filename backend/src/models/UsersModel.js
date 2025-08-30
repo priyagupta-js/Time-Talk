@@ -29,5 +29,13 @@ email:{
 timestamps:true
 });
 
-const userModel = model("user", UserSchema);
-module.exports = userModel;
+UserSchema.methods.toJSON = function(){
+  const obj = this.toObject();
+  delete obj.passwordHash;
+  return obj;
+};
+
+
+module.exports = model("user", UserSchema);
+
+// export default mongoose.model("User",userSchema);

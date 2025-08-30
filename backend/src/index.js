@@ -1,96 +1,37 @@
 const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/authRoutes.js');
 const connectDB = require('./config/db.js');
+
+dotenv.config();
 const app = express();
-const users = require('./routes/authRoutes.js');
 
-const PORT = 3000;
-
-
+// accept JSON bodies from React
 app.use(express.json());
-app.use('/api',users)
-// -> /api/users -> 
-connectDB();
 
-// app.get('/',(req,res)=>{
-//   console.log("I am inside the homepage router")
-// res.send("Welcome to Time-Talk chat application");
-// })
+// allow your react dev server to call this API
+app.use(
+  cors({
+    origin:process.env.CLIENT_ORIGIN,
+    credentials:true
+  })
+);
 
+app.use("/api/auth", authRoutes);
+
+// health check
+app.get("/",(req,res) =>
+  res.send("Auth API is running"));
+
+const PORT = process.env.PORT || 5000;
+
+// start server only after DB connects
+
+(async () =>{
+  await connectDB();
 app.listen(PORT, ()=>{
   console.log(`Server running on port ${PORT}`);
-})
-// ------------------------ Basic Routing ----------------------------------
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const cors = require('cors');
-// const app = express();
-// const PORT = 3000;
+});
+})();
 
-
-// const item = require("./routes/authRoutes");
-// item.use('/api',item);
-
-// Start Server
-// app.listen(PORT, () => {
-//     console.log("Server running on port 3000");
-// });
-
-
-// -----------------------middlewares-----------------------------------------
-// const express = require('express')
-// const app = express()
-// const port = 3000
-
-// load the middleware into the application
-// in-built middleware 
-// app.use(express.json());
-
-// the middleware should be above the route handler.(app.get...)
-// const loginMiddleware = function (req,res,next)
-// {
-//   console.log('Logged In');
-//   // to move to the next middleware
-//   next();
-// }
-// app.use(loginMiddleware);
-
-// const authMiddleware = function (req,res,next)
-// {
-//   console.log('authenticated');
-//   // to move to the next middleware
-//   next();
-// }
-// app.use(authMiddleware);
-
-// const validateMiddleware = function (req,res,next)
-// {
-//   console.log('validated');
-//   // to move to the next middleware
-//   next();
-// }
-// app.use(validateMiddleware);
-
-// app.get('/', (req, res) => {
-//   console.log(req.body);
-//   res.send('Hello World!');
-// })
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
-
-// --------------- authentication based middleware------------------
-// const express = require('express');
-// const app = express();
-// const PORT = 3000;
-
-// const route = require('./routes/authRoutes');
-
-// // mount the route 
-// app.use('/user' , route)
-
-// //  -> /user/student
-// //  -> /user/admin
-
-// app.listen(PORT, () =>{
-//   console.log(`Server running in ${PORT}`);
-// })
