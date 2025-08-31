@@ -1,4 +1,3 @@
-import cors from "cors";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,7 +16,7 @@ async function handleLogin(e)
     try
     {
       const res = await fetch("http://localhost:5000/api/auth/login",{
-     method:POST, 
+     method:"POST", 
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({username,password})
       });
@@ -31,6 +30,7 @@ async function handleLogin(e)
       navigate("/home");
     }catch(err)
     {
+      console.error("Login fetch failed:", err);
       setError("Network Error");
     }
 }

@@ -11,7 +11,7 @@ const [confirm, setConfirm] = useState("");
 const [error, setError] = useState("");
 const navigate = useNavigate();
 
-async function handleSignUp()
+async function handleSignUp(e)
 {
   e.preventDefault();
   setError("");
