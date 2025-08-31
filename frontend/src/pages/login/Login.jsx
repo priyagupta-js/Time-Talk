@@ -1,12 +1,39 @@
-import e from "cors";
+import cors from "cors";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 
 
 const Login =() => {
-  const[username , setUsername] = useState("");
-  const[password, setPassword] = useState("");
+  const [username , setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error , setError] = useState("");
+  const navigate = useNavigate();
+
+async function handleLogin(e)
+{
+    e.preventDefault();
+    setError("");
+    try
+    {
+      const res = await fetch("http://localhost:5000/api/auth/login",{
+     method:POST, 
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+      });
+
+      const data = await res.json();
+      if(!res.ok)
+      {
+        setError(data.message || "Login failed");
+        return;
+      }
+      navigate("/home");
+    }catch(err)
+    {
+      setError("Network Error");
+    }
+}
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-violet-700">
@@ -16,11 +43,13 @@ const Login =() => {
         <p className="text-center text-gray-300 mb-6">Sign in to continue to your chat</p>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200">Username</label>
             <input
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               className="mt-1 w-full p-3 rounded-lg bg-black/70 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
@@ -30,6 +59,8 @@ const Login =() => {
             <label className="block text-sm font-medium text-gray-200">Password</label>
             <input
               type="password"
+                 value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               className="mt-1 w-full p-3 rounded-lg bg-black/70 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
@@ -43,7 +74,7 @@ const Login =() => {
             Sign In
           </button>
         </form>
-
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         {/* Divider */}
         <div className="flex items-center my-6">
           <hr className="flex-grow border-gray-600" />

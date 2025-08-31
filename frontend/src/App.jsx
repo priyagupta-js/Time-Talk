@@ -1,6 +1,7 @@
 import {  Routes,Route, BrowserRouter } from "react-router-dom";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/signup";
+import Home from "./pages/Home/Home";
 function App() {
   
 
@@ -17,4 +18,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
