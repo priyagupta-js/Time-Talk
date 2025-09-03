@@ -61,14 +61,14 @@ const Home = () => {
           <div className="flex-1" />
 
           {/* Secondary icons */}
-          {/* <nav className="flex flex-col gap-5 items-center">
+          <nav className="flex flex-col gap-5 items-center">
             <button className="w-10 h-10 grid place-items-center rounded-md hover:bg-gray-100" aria-label="Starred">
               <FiStar className="text-xl" />
             </button>
             <button className="w-10 h-10 grid place-items-center rounded-md hover:bg-gray-100" aria-label="Archive">
               <FiArchive className="text-xl" />
             </button>
-          </nav> */}
+          </nav>
 
           {/* Divider */}
           <div className="my-3 w-10 border-t border-gray-200" />
@@ -89,8 +89,8 @@ const Home = () => {
       </aside>
 
       {/* PAGE CONTENT (pushed right so it doesn't go under the sidebar) */}
-      {/* <div className="pl-16"> */}
-        {/* <header className="w-full bg-white shadow-sm"> */}
+      <div className="pl-16">
+        <header className="w-full bg-white shadow-sm">
           <div className="mx-auto max-w-7xl h-12 px-4 sm:px-6 lg:px-8 flex items-center gap-3">
             {/* App icon */}
             <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-purple-400 text-white">
