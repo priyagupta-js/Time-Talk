@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+// useNavigate -> hook that redirects to another route in react app.
 
-
-const Login =() => {
+  const Login =() => {
   const [username , setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error , setError] = useState("");
@@ -15,8 +15,8 @@ async function handleLogin(e)
     setError("");
     try
     {
-      const res = await fetch("http://localhost:5000/api/auth/login",{
-     method:"POST", 
+    const res = await fetch("http://localhost:5000/api/auth/login",{
+      method:"POST", 
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({username,password})
       });

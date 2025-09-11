@@ -36,5 +36,4 @@ UserSchema.methods.toJSON = function(){
 
 
 module.exports = model("user", UserSchema);
-
 // export default mongoose.model("User",userSchema);
