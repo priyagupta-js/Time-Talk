@@ -36,7 +36,7 @@ async function handleLogin(e)
 }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-violet-700">
+    <div className="h-screen w-full flex items-center justify-center">
       <div className="bg-purple-900/70 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md">
         {/* Heading */}
         <h2 className="text-3xl font-bold text-center text-white">Welcome Back</h2>
