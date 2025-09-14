@@ -28,7 +28,9 @@ try{
     await User.create({
         name, username:username.toLowerCase(),
         email,
-        passwordHash
+        passwordHash,
+        jwt
+        
     });
 
     return res.status(201).json({message: "Account created. Please log in."});
