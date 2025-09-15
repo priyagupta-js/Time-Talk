@@ -108,7 +108,7 @@ const Home = () => {
 
         {/* Your main page content goes here */}
         <main className="max-w-7xl mx-auto p-6 text-gray-700">
-          <p>Welcome to Time Talk 👋</p>
+          <p>Welcome to Time Talk</p>
           <p className="text-sm text-gray-500">
             This is the light theme sidebar version.
           </p>
