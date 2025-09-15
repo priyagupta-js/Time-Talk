@@ -29,8 +29,6 @@ try{
         name, username:username.toLowerCase(),
         email,
         passwordHash,
-        jwt
-        
     });
 
     return res.status(201).json({message: "Account created. Please log in."});
@@ -79,5 +77,14 @@ router.post("/login",async(req,res) =>{
         return res.status(500).json({message:"Server error"});
     }
 });
+
+// router.post('./chats',async (req,res) =>{
+
+// });
+
+// router.post('./messages',async(req,res) =>{
+// const message =  {message,chats};
+// res.json({message:"Message received"});
+// })
 
 module.exports = router;
