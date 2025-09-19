@@ -41,7 +41,6 @@ try{
 }
 });
 
-
 // POST /api/auth/login
 router.post("/login",async(req,res) =>{
     try{
@@ -83,7 +82,7 @@ router.post("/login",async(req,res) =>{
 // });
 
 router.post('./messages',async(req,res) =>{
-const message =  {message,chats};
+const message = {message,chats};
 res.json({message:"Message received"});
 })
 
