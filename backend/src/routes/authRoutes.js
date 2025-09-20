@@ -81,9 +81,9 @@ router.post("/login",async(req,res) =>{
 
 // });
 
-router.post('./messages',async(req,res) =>{
-const message = {message,chats};
-res.json({message:"Message received"});
-})
+// router.post('./messages',async(req,res) =>{
+// const message = {message,chats};
+// res.json({message:"Message received"});
+// })
 
 module.exports = router;
