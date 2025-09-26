@@ -105,3 +105,5 @@ async function handleLogin(e)
 }
 
 export default Login;
+
+// if a variable is null , then it can be reassigned the value ;
