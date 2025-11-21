@@ -86,4 +86,4 @@ router.post('./chats',async (req,res) =>{
 // res.json({message:"Message received"});
 // })
 
-// module.exports = router;
+module.exports = router;
