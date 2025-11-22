@@ -1,4 +1,5 @@
 const express = require('express');
+// const mongoose = require ('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./src/routes/authRoutes.js');
@@ -17,6 +18,8 @@ app.use(
     credentials:true
   })
 );
+
+// mongoose.connect(process.env.MONGODB_URI)
 
 app.use("/api/auth", authRoutes);
 
