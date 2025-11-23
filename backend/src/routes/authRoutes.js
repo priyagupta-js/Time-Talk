@@ -4,6 +4,11 @@ const User = require('../models/UsersModel')
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
+
+const createToken = (user) => {
+  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+};
+
 // POST /api/auth/signup
 router.post('/signup', async(req,res) =>
 {
@@ -77,9 +82,10 @@ router.post("/login",async(req,res) =>{
     }
 });
 
-router.post('./chats',async (req,res) =>{
 
-});
+// router.post('./chats',async (req,res) =>{
+
+// });
 
 // router.post('./messages',async(req,res) =>{
 // const message = {message,chats};
