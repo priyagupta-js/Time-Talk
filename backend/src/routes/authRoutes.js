@@ -5,9 +5,6 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 
-const createToken = (user) => {
-  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-};
 
 // POST /api/auth/signup
 router.post('/signup', async(req,res) =>
@@ -70,11 +67,20 @@ router.post("/login",async(req,res) =>{
         {
             return res.status(400).json({message:"Invalid username or password"});
         }
+        const token = jwt.sign({
+            id: user._id, 
+            username: user.username
+        },
+        procrss.env.JWT_SECRET,
+        {expiresIn: process.env.JWT_EXPIRES_IN}
+    );
         
+        // send the response to frontend
     // for now, keep it simple — return success + user summary
     // later you can issue a JWT and set a cookie
         return res.status(200).json({
             message:"Login successful",
+            token: token,
             user:{id:user._id, username: user.username, name:user.name}
         });
     }
@@ -84,6 +90,7 @@ router.post("/login",async(req,res) =>{
         return res.status(500).json({message:"Server error"});
     }
 });
+
 
 
 // router.post('./chats',async (req,res) =>{
