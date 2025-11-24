@@ -2,8 +2,20 @@ import { GiTimeTrap } from "react-icons/gi";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { BiMessageRoundedDots } from "react-icons/bi";
 import { FiPhone, FiAperture, FiStar, FiArchive, FiSettings } from "react-icons/fi";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+  }
+}, []);
+
   return (
     <>
       {/* LEFT RAIL / SIDEBAR*/}

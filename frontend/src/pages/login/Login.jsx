@@ -21,12 +21,20 @@ async function handleLogin(e)
       body:JSON.stringify({username,password})
       });
 
+
+      
       const data = await res.json();
       if(!res.ok)
       {
         setError(data.message || "Login failed");
         return;
       }
+
+      // store jwt
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // redirects
       navigate("/home");
     }catch(err)
     {
