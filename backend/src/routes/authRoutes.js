@@ -29,12 +29,15 @@ try{
 
     const passwordHash = await bcrypt.hash(password,10);
 
+
     // save user 
     await User.create({
         name, username:username.toLowerCase(),
         email,
         passwordHash,
     });
+
+    // const token = createToken(User);
 
     return res.status(201).json({message: "Account created. Please log in."});
 }catch(err){
