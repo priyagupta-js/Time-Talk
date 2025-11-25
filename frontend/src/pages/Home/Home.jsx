@@ -22,6 +22,8 @@ const Home = () =>{
     <div className="main">
       <div className="navbar">
         {/* logo */}
+        <div className="logo"></div>
+        <div className="">Time-Talk</div>
         {/* project-name */}
       </div>
       <div className="chatUI-wrapper">
