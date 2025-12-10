@@ -34,6 +34,8 @@ const Home = () =>{
   )
 }
 
+export default Home;
+
 // const Home = () => {
 
 //   const navigate = useNavigate();
