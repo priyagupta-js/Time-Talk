@@ -27,7 +27,6 @@ const Home = () =>{
         {/* project-name */}
       </div>
       <div className="chatUI-wrapper">
-
       </div>
     </div>
     </>
