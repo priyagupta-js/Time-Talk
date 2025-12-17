@@ -1,22 +1,22 @@
-import {  Routes,Route, BrowserRouter } from "react-router-dom";
-import Login from "./pages/login/Login";
-import Signup from "./pages/signup/signup";
-import Home from "./pages/Home/Home";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Signup from "./pages/signup";
+import Home from "./pages/Home";
 import "./index.css";
 function App() {
-  
-
   return (
-      <BrowserRouter>
+    <BrowserRouter>
       <div className="app">
-      <Routes>
-          <Route path="/" element={<Login/>} />
-          <Route path="/signup" element={<Signup/>} />
-          <Route path="/home" element={<Home/>} />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </div>
-      </BrowserRouter>
-  )
+    </BrowserRouter>
+  );
 }
 
 export default App;
