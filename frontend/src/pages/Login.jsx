@@ -44,7 +44,7 @@ const Login = () => {
         <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-pink-400/20 rounded-full blur-2xl animate-float delay-2000" />
       </div>
 
-      {/* Card */}
+      
       <div className="relative w-full max-w-md bg-white/80 dark:bg-black/60 backdrop-blur-xl
                       rounded-2xl shadow-xl border border-border/50 animate-slide-up">
 
