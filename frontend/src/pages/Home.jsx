@@ -35,11 +35,9 @@ const Home = () =>{
 
 export default Home;
 
-// const Hom
 
-//   const navigate = useNavigate();
 
-//   useEffect(() => {
+
 //   const token = localStorage.getItem("token");
 //   if (!token) {
 //     navigate("/login");
