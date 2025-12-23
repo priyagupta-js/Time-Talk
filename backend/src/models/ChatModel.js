@@ -1,3 +1,5 @@
+// 1-1 chat metadata
+
 const mongoose = require('mongoose');
 
 const ChatModel = mongoose.Schema

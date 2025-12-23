@@ -2,6 +2,7 @@ const express = require('express');
 // const mongoose = require ('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser'); 
 const authRoutes = require('./src/routes/authRoutes.js');
 const connectDB = require('./src/config/db.js');
 
@@ -10,6 +11,8 @@ const app = express();
 
 // accept JSON bodies from React
 app.use(express.json());
+
+app.use(cookieParser());
 
 // allow your react dev server to call this API
 app.use(

@@ -1,3 +1,5 @@
+// Users, profile, lastSeen
+
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -34,12 +36,5 @@ email:{
 timestamps:true
 });
 
-// UserSchema.methods.toJSON = function(){
-//   const obj = this.toObject();
-//   delete obj.passwordHash;
-//   return obj;
-// };
-
 
 module.exports = mongoose.model("user", UserSchema);
-// export default mongoose.model("User",userSchema);

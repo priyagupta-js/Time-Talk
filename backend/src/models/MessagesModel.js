@@ -1,3 +1,5 @@
+// Messages + attachments
+
 const mongoose = require('mongoose');
 
 const MessageModel = mongoose.Schema({
