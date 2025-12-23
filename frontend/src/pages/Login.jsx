@@ -125,7 +125,7 @@ const Login = () => {
           <button
             type="submit"
             className="w-full h-12 text-base font-semibold rounded-lg
-                       bg-gradient-to-r from-purple-500 to-blue-500
+                       bg-linear-to-r from-purple-500 to-blue-500
                        text-white shadow-lg hover:shadow-xl
                        hover:opacity-90 transition-all"
           >
