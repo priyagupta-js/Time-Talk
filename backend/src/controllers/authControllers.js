@@ -1,72 +1,101 @@
-// import jwt from "jsonwebtoken";
-// import { validationResult } from "express-validator";
-// import { User } from "../models/User.js";
-// import { signAccess, signRefresh, setAuthCookies, clearAuthCookies } from "../utils/token.js";
+const User = require("../models/UsersModel");
+const { hashPassword, comparePassword } = require("../utils/password");
+const { createToken } = require("../utils/jwt");
 
-// export const register = async (req, res) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+/* SIGNUP */
+const signup = async (req, res) => {
+  try {
+    const { name, username, email, password } = req.body;
 
-//   const { name, username, email, password } = req.body;
+    if (!name || !username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//   const exists = await User.findOne({ $or: [{ email }, { username: username.toLowerCase() }] });
-//   if (exists) return res.status(409).json({ message: "Email or username already in use" });
+    const existingUser = await User.findOne({
+      $or: [{ username }, { email }],
+    });
 
-//   const user = await User.create({ name, username: username.toLowerCase(), email, password });
-//   const accessToken = signAccess({ uid: user._id });
-//   const refreshToken = signRefresh({ uid: user._id, tv: user.tokenVersion });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "Username or email already exists" });
+    }
 
-//   setAuthCookies(res, accessToken, refreshToken);
-//   res.status(201).json({
-//     user: { id: user._id, name: user.name, username: user.username, email: user.email, avatarUrl: user.avatarUrl, bio: user.bio }
-//   });
-// };
+    const passwordHash = await hashPassword(password);
 
-// export const login = async (req, res) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    await User.create({
+      name,
+      username,
+      email,
+      passwordHash,
+    });
 
-//   const { usernameOrEmail, password } = req.body;
-//   const user = await User.findOne({
-//     $or: [{ email: usernameOrEmail.toLowerCase() }, { username: usernameOrEmail.toLowerCase() }]
-//   }).select("+password");
-//   if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    res.status(201).json({ message: "Signup successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Signup failed" });
+  }
+};
 
-//   const ok = await user.comparePassword(password);
-//   if (!ok) return res.status(400).json({ message: "Invalid credentials" });
+/* LOGIN */
+const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-//   const accessToken = signAccess({ uid: user._id });
-//   const refreshToken = signRefresh({ uid: user._id, tv: user.tokenVersion });
-//   setAuthCookies(res, accessToken, refreshToken);
+    if (!username || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//   res.json({
-//     user: { id: user._id, name: user.name, username: user.username, email: user.email, avatarUrl: user.avatarUrl, bio: user.bio }
-//   });
-// };
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-// export const refresh = async (req, res) => {
-//   try {
-//     const token = req.cookies?.refresh_token;
-//     if (!token) return res.status(401).json({ message: "No refresh token" });
+    const isMatch = await comparePassword(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-//     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET); // { uid, tv, iat, exp }
-//     const user = await User.findById(decoded.uid);
-//     if (!user) return res.status(401).json({ message: "Invalid refresh token" });
-//     if (decoded.tv !== user.tokenVersion) return res.status(401).json({ message: "Token expired (version mismatch)" });
+      const token = createToken(user._id);
+       res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // true in production
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-//     const accessToken = signAccess({ uid: user._id });
-//     const refreshToken = signRefresh({ uid: user._id, tv: user.tokenVersion });
-//     setAuthCookies(res, accessToken, refreshToken);
 
-//     res.json({ ok: true });
-//   } catch (e) {
-//     return res.status(401).json({ message: "Invalid refresh token" });
-//   }
-// };
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Login failed" });
+  }
+};
 
-// export const logout = async (req, res) => {
-//   clearAuthCookies(res);
-//   res.json({ ok: true });
-// };
+const me = async (req, res) => {
+  const user = await User.findById(req.userId).select("-passwordHash");
+  res.json(user);
+};
 
+const logout = async (req, res) => {
+  await User.findByIdAndUpdate(req.userId, {
+    lastSeen: new Date(),
+  });
+
+  res.clearCookie("token");
+  res.json({ message: "Logged out successfully" });
+};
+
+module.exports = {
+  signup,
+  login,
+  me,
+  logout,
+};
 
