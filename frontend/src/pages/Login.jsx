@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MessageCircle, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -9,14 +10,17 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const { setUser } = useAuth();
+
   async function handleLogin(e) {
     e.preventDefault();
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
@@ -26,8 +30,7 @@ const Login = () => {
         return;
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
       navigate("/home");
     } catch (err) {
       setError("Network error");
@@ -36,7 +39,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      
       {/* Decorative background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl animate-float" />
@@ -44,14 +46,16 @@ const Login = () => {
         <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-pink-400/20 rounded-full blur-2xl animate-float delay-2000" />
       </div>
 
-      
-      <div className="relative w-full max-w-md bg-white/80 dark:bg-black/60 backdrop-blur-xl
-                      rounded-2xl shadow-xl border border-border/50 animate-slide-up">
-
+      <div
+        className="relative w-full max-w-md bg-white/80 dark:bg-black/60 backdrop-blur-xl
+                      rounded-2xl shadow-xl border border-border/50 animate-slide-up"
+      >
         {/* Header */}
         <div className="p-6 text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl
-                          flex items-center justify-center shadow-lg">
+          <div
+            className="mx-auto w-16 h-16 bg-primary rounded-2xl
+                          flex items-center justify-center shadow-lg"
+          >
             <MessageCircle className="w-8 h-8 text-primary-foreground" />
           </div>
 
@@ -67,7 +71,6 @@ const Login = () => {
 
         {/* Form */}
         <form onSubmit={handleLogin} className="px-6 pb-6 space-y-5">
-
           {/* Username */}
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground">
@@ -117,9 +120,7 @@ const Login = () => {
           </div>
 
           {/* Error */}
-          {error && (
-            <p className="text-sm text-red-500 text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
           {/* Submit */}
           <button

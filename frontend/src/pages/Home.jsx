@@ -17,6 +17,14 @@ const Home = () =>{
     }
   } , []);
 
+  const handleLogout = async () => {
+  await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  setUser(null);
+};
   return (
     <>
     <div className="main">
