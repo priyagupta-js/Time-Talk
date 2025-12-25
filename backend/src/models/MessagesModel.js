@@ -1,29 +1,21 @@
-// Messages + attachments
+const mongoose = require("mongoose");
 
-const mongoose = require('mongoose');
+const messageSchema = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    chat: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
+    },
+    content: {
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const MessageModel = mongoose.Schema({
-sender:
-{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"user",
-},
-Content : {
-    type:String,
-    trim:true,
-},
-
-chat:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"chat"
-},
-},
-{
-    timestamps:true,
-});
-
-exports.module = mongoose.model("message",MessageModel);
-
-// sender
-// content 
-// chat
+module.exports = mongoose.model("Message", messageSchema);

@@ -19,9 +19,9 @@ if (loading) return <p>Loading... </p>;
       <div className="app">
         <Routes>
          <Route path="/" element={<Index />} />
-          <Route path="/login" element={!user? <Login />: <Navigate to = "/home"/>} />
-          <Route path="/signup" element={!user? <Signup />: <Navigate to = "/home"/>} />
-          <Route path="/home" element={user? <Home /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!user? <Login />: <Navigate to = "/home" replace/>} />
+          <Route path="/signup" element={!user? <Signup />: <Navigate to = "/home" replace/>} />
+          <Route path="/home" element={user? <Home /> : <Navigate to="/login" replace/>} />
         </Routes>
       </div>
     </BrowserRouter>

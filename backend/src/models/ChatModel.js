@@ -1,44 +1,23 @@
-// 1-1 chat metadata
+const mongoose = require("mongoose");
 
-const mongoose = require('mongoose');
-
-const ChatModel = mongoose.Schema
-({
-chatName:
-{
-    type:String,
-    required:true,
-    trim:true
-},
-isGroupChat:{
-    type:Boolean,
-    default:false
-},
-
-// refer the user document
-users:[{
-type:mongoose.Schema.Types.ObjectId,
-ref:"user",
-}],
-latestMessage :{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"messages",
-},
-groudAdmin:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"user"
-},
-},
-{
-timestamps:true
-}
+const chatSchema = new mongoose.Schema(
+  {
+    isGroupChat: {
+      type: Boolean,
+      default: false,
+    },
+    users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    lastMessage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  },
+  { timestamps: true }
 );
 
-module.exports = mongoose.model ("chat",ChatModel);
-
-
-// chatName
-// isGroupChat
-// users
-// latestMessages
-// groudAdmin
+module.exports = mongoose.model("Chat", chatSchema);

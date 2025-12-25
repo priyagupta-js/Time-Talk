@@ -8,6 +8,9 @@ const {Server} = require("socket.io");
 const jwt = require("jsonwebtoken");
 const User = require("./src/models/UsersModel.js");
 const http = require("http");
+const Chat = require("./src/models/ChatModel");
+const Message = require("./src/models/MessagesModel");
+
 
 dotenv.config();
 const app = express();
@@ -15,7 +18,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_ORIGIN,
     credentials: true,
   },
 });
@@ -58,16 +61,50 @@ io.use((socket, next) => {
 
 // SOCKET LOGIC
 io.on("connection", async(socket) => {
-  console.log("Socket connected:", socket.id);
+  console.log("Socket connected:", socket.userId);
 
    // mark user online
   await User.findByIdAndUpdate(socket.userId, {
     lastSeen: null,
   });
 
+   // JOIN CHAT ROOM
+  socket.on("joinChat", (chatId) => {
+    socket.join(chatId);
+    console.log(`User ${socket.userId} joined chat ${chatId}`);
+  });
+
+    // 🔹 SEND MESSAGE
+  socket.on("sendMessage", async ({ chatId, content }) => {
+    try {
+      // 1. Save message
+      const message = await Message.create({
+        sender: socket.userId,
+        chat: chatId,
+        content,
+      });
+
+      // 2. Update last message in chat
+      await Chat.findByIdAndUpdate(chatId, {
+        lastMessage: message._id,
+      });
+
+      // 3. Emit message to everyone in chat room
+      io.to(chatId).emit("newMessage", {
+        _id: message._id,
+        sender: socket.userId,
+        chat: chatId,
+        content,
+        createdAt: message.createdAt,
+      });
+    } catch (error) {
+      console.error("Message send failed", error);
+    }
+  });
+
 
   socket.on("disconnect", async() => {
-    console.log("Socket disconnected:", socket.id);
+    console.log("Socket disconnected:", socket.userId);
     await User.findByIdAndUpdate(socket.userId, {
       lastSeen: new Date(),
     });
@@ -82,11 +119,8 @@ app.get("/",(req,res) =>
 const PORT = process.env.PORT || 5000;
 
 // start server only after DB connects
-
-(async () =>{
-
-  await connectDB();
-app.listen(PORT, ()=>{
-  console.log(`Server running on port ${PORT}`);
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
-})();
