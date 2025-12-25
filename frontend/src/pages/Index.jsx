@@ -15,7 +15,7 @@ const Index = () => {
           {/* Heading */}
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-              Welcome to <span className="text-primary">ChatApp</span>
+              Welcome to <span className="text-primary">Time-Talk</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground">
               Connect with friends and family. Simple, fast, and fun messaging
@@ -26,11 +26,11 @@ const Index = () => {
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-6 py-4">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="w-5 h-5 text-orange" />
+              <Users className="w-5 h-5 text-orange-500" />
               <span>Group Chats</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Shield className="w-5 h-5 text-accent" />
+              <Shield className="w-5 h-5 text-green-500" />
               <span>Safe & Secure</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">

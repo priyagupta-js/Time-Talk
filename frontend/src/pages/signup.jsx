@@ -308,18 +308,18 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-fuchsia-100 px-4">
       <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Logo */}
-        <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
-          <MessageCircle className="w-8 h-8 text-primary-foreground" />
+        <div className="mx-auto w-16 h-16 bg-linear-to-br from-purple-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+          <MessageCircle className="w-8 h-8 text-white" />
         </div>
 
         {/* Heading */}
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-bold text-foreground">Create Account</h2>
           <p className="text-muted-foreground">
-            Join ChatApp and start chatting
+            Join Time-Talk and start chatting
           </p>
         </div>
 
