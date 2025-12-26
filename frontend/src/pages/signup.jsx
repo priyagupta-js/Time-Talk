@@ -309,7 +309,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-fuchsia-100 px-4">
-      <div className="w-full max-w-md space-y-8 animate-fade-in">
+      <div className="w-full max-w-md bg-white p-4 rounded-lg space-y-8 shadow-lg animate-fade-in">
         {/* Logo */}
         <div className="mx-auto w-16 h-16 bg-linear-to-br from-purple-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
           <MessageCircle className="w-8 h-8 text-white" />
@@ -330,7 +330,7 @@ const Signup = () => {
             placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent transition"
           />
 
           <input
@@ -338,7 +338,7 @@ const Signup = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200 focus:outline-none focus:ring-2 focus:border-transparent transition"
           />
 
           <input
@@ -346,7 +346,7 @@ const Signup = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200 focus:outline-none focus:border-transparent transition"
           />
 
           <input
@@ -354,7 +354,7 @@ const Signup = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200 focus:outline-none focus:border-transparent transition"
           />
 
           <input
@@ -362,7 +362,7 @@ const Signup = () => {
             placeholder="Confirm Password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200  focus:outline-none focus:border-transparent transition"
           />
 
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
@@ -370,7 +370,8 @@ const Signup = () => {
           <button
             type="submit"
             className="w-full h-12 text-lg font-semibold rounded-lg
-             bg-primary text-primary-foreground
+              text-primary-foreground
+              bg-linear-to-br from-purple-400 to-blue-500 text-white 
              hover:bg-primary/90 transition-all shadow-lg"
           >
             Create Account

@@ -38,7 +38,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-fuchsia-100 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl animate-float" />
@@ -47,21 +47,21 @@ const Login = () => {
       </div>
 
       <div
-        className="relative w-full max-w-md bg-white/80 dark:bg-black/60 backdrop-blur-xl
-                      rounded-2xl shadow-xl border border-border/50 animate-slide-up"
+        className="relative w-full max-w-md bg-white
+                      rounded-2xl shadow-xl animate-slide-up"
       >
         {/* Header */}
         <div className="p-6 text-center space-y-4">
           <div
-            className="mx-auto w-16 h-16 bg-primary rounded-2xl
+            className="mx-auto w-16 h-16 bg-linear-to-br from-purple-400 to-blue-500 rounded-2xl
                           flex items-center justify-center shadow-lg"
           >
-            <MessageCircle className="w-8 h-8 text-primary-foreground" />
+            <MessageCircle className="w-8 h-8 text-white" />
           </div>
 
           <div>
             <h2 className="text-2xl font-bold text-foreground">
-              Welcome Back! 👋
+              Welcome Back!
             </h2>
             <p className="text-muted-foreground">
               Sign in to continue chatting
@@ -72,27 +72,18 @@ const Login = () => {
         {/* Form */}
         <form onSubmit={handleLogin} className="px-6 pb-6 space-y-5">
           {/* Username */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-foreground">
-              Username
-            </label>
             <input
               type="text"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full h-12 px-4 rounded-lg border border-input
-                         bg-background focus:outline-none
-                         focus:ring-2 focus:ring-primary/30 transition"
+              className="w-full h-12 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border  border-gray-200
+                         focus:outline-none
+                         focus:ring-2 focus:border-transparent transition"
             />
-          </div>
 
           {/* Password */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-foreground">
-              Password
-            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -100,9 +91,9 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full h-12 px-4 pr-12 rounded-lg border border-input
-                           bg-background focus:outline-none
-                           focus:ring-2 focus:ring-primary/30 transition"
+                className="w-full h-12 px-4 pr-12 rounded-lg  bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:border-transparent transition"
               />
               <button
                 type="button"
@@ -117,7 +108,6 @@ const Login = () => {
                 )}
               </button>
             </div>
-          </div>
 
           {/* Error */}
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
