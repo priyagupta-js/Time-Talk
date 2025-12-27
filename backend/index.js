@@ -8,9 +8,10 @@ const {Server} = require("socket.io");
 const jwt = require("jsonwebtoken");
 const User = require("./src/models/UsersModel.js");
 const http = require("http");
-const Chat = require("./src/models/ChatModel");
+const Chat = require("./src/models/ChatModel.js");
 const Message = require("./src/models/MessagesModel");
-
+const userRoutes = require("./src/routes/userRoutes");
+const chatRoutes = require("./src/routes/chatRoutes.js");
 
 dotenv.config();
 const app = express();
@@ -36,6 +37,8 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/chats",chatRoutes);
 
 io.use((socket, next) => {
   try {
