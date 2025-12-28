@@ -38,11 +38,14 @@ export default function Home() {
 
   /* ---------------- SOCKET JOIN ---------------- */
   useEffect(() => {
-    if (!socket || !activeChat) return;
+    if (!socket || chats.length === 0) return;
 
-    socket.emit("joinChat", activeChat._id);
-    setMessages([]);
-  }, [socket, activeChat]);
+   chats.forEach((chat) => {
+    if (chat?._id) {
+      socket.emit("joinChat", chat._id);
+    }
+  });
+}, [socket, chats]);
 
   /* ---------------- RECEIVE MESSAGE ---------------- */
   useEffect(() => {
