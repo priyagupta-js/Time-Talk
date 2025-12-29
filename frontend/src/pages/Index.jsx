@@ -54,7 +54,7 @@ const Index = () => {
     transition-all duration-200 
     hover:bg-orange-600 
     hover:shadow-xl 
- 
+    active:scale-95
   "
               >
                 Get Started
