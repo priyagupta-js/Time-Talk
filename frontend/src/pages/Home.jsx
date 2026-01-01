@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Menu, MoreVertical, Send } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
+import { useNavigation } from "react-router-dom";
 
 export default function Home() {
   const socket = useSocket();
-  const { user } = useAuth();
+  const { user , setUser} = useAuth();
 
   const userId = user?._id || user?.id || null;
 
@@ -16,7 +17,19 @@ export default function Home() {
 
   const [showStartChat, setShowStartChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [open,setOpen] = useState(false);
+  const navigate= useNavigation();
 
+  const HandleLogout = async () =>{
+    await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
+      method: "Post",
+      credentials:"include",
+    });
+
+    setUser(null);
+    navigate("/login");
+  };
+  
   /* ---------------- EARLY GUARD ---------------- */
   if (!userId) {
     return (
