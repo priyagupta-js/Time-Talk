@@ -22,12 +22,14 @@ router.post("/access", authMiddleware, async (req, res) => {
   let chat = await Chat.findOne({
     isGroupChat: false,
     users: { $all: [req.userId, userId] },
-  });
+  }).populate("users", "name email");
 
   if (!chat) {
     chat = await Chat.create({
       users: [req.userid, userId],
     });
+
+    chat = await Chat.findById(chat._id).populate("users","name email");
   }
 
   res.json(chat);
