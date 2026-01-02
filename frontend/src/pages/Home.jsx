@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Menu, MoreVertical, Send } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
-import { useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const socket = useSocket();
-  const { user , setUser} = useAuth();
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const userId = user?._id || user?.id || null;
 
@@ -17,20 +18,29 @@ export default function Home() {
 
   const [showStartChat, setShowStartChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [open,setOpen] = useState(false);
-  const navigate= useNavigation();
+  const [open, setOpen] = useState(false);
 
-  const HandleLogout = async () =>{
+  /* ---------------- LOGOUT ---------------- */
+  const handleLogout = async () => {
     await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
-      method: "Post",
-      credentials:"include",
+      method: "POST",
+      credentials: "include",
     });
 
     setUser(null);
     navigate("/login");
   };
-  
-  /* ---------------- EARLY GUARD ---------------- */
+
+  /* ---------------- HELPER: GET OTHER USER ---------------- */
+  const getOtherUser = (chat) => {
+    if (!chat || !Array.isArray(chat.users)) return null;
+
+    return chat.users.find(
+      (u) => u && typeof u === "object" && u._id !== userId
+    );
+  };
+
+  /* ---------------- GUARD ---------------- */
   if (!userId) {
     return (
       <div className="h-screen flex items-center justify-center text-gray-500">
@@ -49,16 +59,16 @@ export default function Home() {
       .catch(() => setChats([]));
   }, []);
 
-  /* ---------------- SOCKET JOIN ---------------- */
+  /* ---------------- JOIN ALL CHATS ---------------- */
   useEffect(() => {
     if (!socket || chats.length === 0) return;
 
-   chats.forEach((chat) => {
-    if (chat?._id) {
-      socket.emit("joinChat", chat._id);
-    }
-  });
-}, [socket, chats]);
+    chats.forEach((chat) => {
+      if (chat?._id) {
+        socket.emit("joinChat", chat._id);
+      }
+    });
+  }, [socket, chats]);
 
   /* ---------------- RECEIVE MESSAGE ---------------- */
   useEffect(() => {
@@ -120,18 +130,46 @@ export default function Home() {
 
   return (
     <div className="h-screen flex bg-gray-50">
+
       {/* LEFT SIDEBAR */}
-      <div className="w-96 bg-white border-r">
-        <div className="p-4 border-b flex items-center justify-between">
-          <Menu />
+      <div className="w-96 bg-white border-r relative">
+
+        {/* TOP BAR */}
+        <div className="p-4 border-b flex items-center justify-between relative">
+          <button onClick={() => setOpen(!open)}>
+            <Menu />
+          </button>
+
           <button
             onClick={() => setShowStartChat(true)}
             className="text-sm text-purple-600 font-medium"
           >
             New Chat
           </button>
+
+          {/* DROPDOWN */}
+          {open && (
+            <div className="absolute top-14 left-4 bg-white shadow-md rounded w-48 p-3 z-50">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold">
+                  {user?.name?.[0] || "U"}
+                </div>
+                <span className="font-medium text-sm">
+                  {user?.name || "User"}
+                </span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="text-red-500 text-sm w-full text-left"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
 
+        {/* EMPTY STATE */}
         {chats.length === 0 && (
           <div className="p-6 text-gray-500 text-center">
             <p>No conversations yet</p>
@@ -143,15 +181,7 @@ export default function Home() {
 
         {/* CHAT LIST */}
         {chats.map((chat) => {
-          const otherUser = Array.isArray(chat.users)
-            ? chat.users.find(
-                (u) =>
-                  u &&
-                  typeof u === "object" &&
-                  u._id &&
-                  u._id !== userId
-              )
-            : null;
+          const otherUser = getOtherUser(chat);
 
           return (
             <div
@@ -162,7 +192,7 @@ export default function Home() {
               }`}
             >
               <div className="font-semibold">
-                {otherUser?.username || "New Chat"}
+                {otherUser?.name || "New Chat"}
               </div>
             </div>
           );
@@ -171,19 +201,12 @@ export default function Home() {
 
       {/* RIGHT PANEL */}
       <div className="flex-1 flex flex-col">
+
         {/* HEADER */}
         <div className="px-6 py-4 border-b flex justify-between">
           <div className="font-semibold">
             {activeChat
-              ? activeChat.users
-                  ?.find(
-                    (u) =>
-                      u &&
-                      typeof u === "object" &&
-                      u._id &&
-                      u._id !== userId
-                  )
-                  ?.username || "Chat"
+              ? getOtherUser(activeChat)?.name || "Chat"
               : "Select a chat"}
           </div>
           <MoreVertical />
@@ -195,9 +218,7 @@ export default function Home() {
             <div
               key={msg._id}
               className={`flex ${
-                msg.sender === userId
-                  ? "justify-end"
-                  : "justify-start"
+                msg.sender === userId ? "justify-end" : "justify-start"
               }`}
             >
               <div className="bg-white px-4 py-2 rounded-xl shadow">
@@ -229,15 +250,23 @@ export default function Home() {
 
       {/* START CHAT MODAL */}
       {showStartChat && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-80">
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setShowStartChat(false)}
+        >
+          <div
+            className="bg-white p-6 rounded-lg w-80"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="font-semibold mb-3">Start Conversation</h3>
+
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Username or Email"
               className="w-full px-3 py-2 border rounded"
             />
+
             <button
               onClick={startConversation}
               className="mt-4 w-full bg-purple-600 text-white py-2 rounded"
