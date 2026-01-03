@@ -12,6 +12,8 @@ const Chat = require("./src/models/ChatModel.js");
 const Message = require("./src/models/MessagesModel");
 const userRoutes = require("./src/routes/userRoutes");
 const chatRoutes = require("./src/routes/chatRoutes.js");
+const messageRoutes = require("./src/routes/messageRoutes.js");
+
 
 dotenv.config();
 const app = express();
@@ -39,7 +41,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chats",chatRoutes);
-
+app.use("/api/messages",messageRoutes);
 io.use((socket, next) => {
   try {
     const cookie = socket.handshake.headers.cookie;
