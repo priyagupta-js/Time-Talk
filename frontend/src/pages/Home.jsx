@@ -109,14 +109,14 @@ export default function Home() {
   const sendMessage = () => {
   if (!message.trim() || !activeChat) return;
 
-  const tempMsg = {
-    _id: Date.now(),
-    sender: userId,
-    chat: activeChat._id,
-    content: message,
-  };
+  // const tempMsg = {
+  //   _id: Date.now(),
+  //   sender: userId,
+  //   chat: activeChat._id,
+  //   content: message,
+  // };
 
-  setMessages((prev) => [...prev, tempMsg]); // instant UI
+  // setMessages((prev) => [...prev, tempMsg]); // instant UI
 
   socket.emit("sendMessage", {
     chatId: activeChat._id,
@@ -244,20 +244,30 @@ export default function Home() {
         </div>
 
         {/* MESSAGES */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          {messages.map((msg) => (
-            <div
-              key={msg._id}
-              className={`flex ${
-                msg.sender === userId ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div className="bg-white px-4 py-2 rounded-xl shadow">
-                {msg.content}
-              </div>
-            </div>
-          ))}
+        {/* MESSAGES */}
+<div className="flex-1 p-6 overflow-y-auto space-y-3">
+  {messages.map((msg) => {
+    const isOwnMessage = msg.sender === userId;
+
+    return (
+      <div
+        key={msg._id}
+        className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
+      >
+        <div
+          className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
+            ${isOwnMessage
+              ? "bg-purple-600 text-white rounded-br-none"
+              : "bg-white text-gray-800 rounded-bl-none"
+            }`}
+        >
+          {msg.content}
         </div>
+      </div>
+    );
+  })}
+</div>
+
 
         {/* INPUT */}
         {activeChat && (
