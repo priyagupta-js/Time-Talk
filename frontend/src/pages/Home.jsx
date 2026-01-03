@@ -49,6 +49,18 @@ export default function Home() {
     );
   }
 
+  useEffect(() => {
+  if (!activeChat) return;
+
+  fetch(`${import.meta.env.VITE_BACKEND_API}/api/messages/${activeChat._id}`, {
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then(setMessages)
+    .catch(() => setMessages([]));
+}, [activeChat]);
+
+
   /* ---------------- FETCH CHATS ---------------- */
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_API}/api/chats`, {
@@ -75,26 +87,45 @@ export default function Home() {
     if (!socket) return;
 
     const handleNewMessage = (msg) => {
-      if (msg.chat === activeChat?._id) {
-        setMessages((prev) => [...prev, msg]);
-      }
-    };
+      if (activeChat && msg.chat === activeChat._id) {
+      setMessages((prev) => [...prev, msg]);
+    }
+
+    // always update chat list ordering
+    setChats((prevChats) =>
+      prevChats.map((chat) =>
+        chat._id === msg.chat
+          ? { ...chat, lastMessage: msg }
+          : chat
+      )
+    );
+  };
 
     socket.on("newMessage", handleNewMessage);
-    return () => socket.off("newMessage", handleNewMessage);
-  }, [socket, activeChat]);
+      return () => socket.off("newMessage", handleNewMessage);
+}, [socket, activeChat]);
 
   /* ---------------- SEND MESSAGE ---------------- */
   const sendMessage = () => {
-    if (!message.trim() || !activeChat) return;
+  if (!message.trim() || !activeChat) return;
 
-    socket.emit("sendMessage", {
-      chatId: activeChat._id,
-      content: message,
-    });
-
-    setMessage("");
+  const tempMsg = {
+    _id: Date.now(),
+    sender: userId,
+    chat: activeChat._id,
+    content: message,
   };
+
+  setMessages((prev) => [...prev, tempMsg]); // instant UI
+
+  socket.emit("sendMessage", {
+    chatId: activeChat._id,
+    content: message,
+  });
+
+  setMessage("");
+};
+
 
   /* ---------------- START CONVERSATION ---------------- */
   const startConversation = async () => {
