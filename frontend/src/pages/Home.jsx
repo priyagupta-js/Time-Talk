@@ -19,6 +19,8 @@ export default function Home() {
   const [showStartChat, setShowStartChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
 
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
@@ -50,16 +52,18 @@ export default function Home() {
   }
 
   useEffect(() => {
-  if (!activeChat) return;
+    if (!activeChat) return;
 
-  fetch(`${import.meta.env.VITE_BACKEND_API}/api/messages/${activeChat._id}`, {
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then(setMessages)
-    .catch(() => setMessages([]));
-}, [activeChat]);
-
+    fetch(
+      `${import.meta.env.VITE_BACKEND_API}/api/messages/${activeChat._id}`,
+      {
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then(setMessages)
+      .catch(() => setMessages([]));
+  }, [activeChat]);
 
   /* ---------------- FETCH CHATS ---------------- */
   useEffect(() => {
@@ -88,44 +92,41 @@ export default function Home() {
 
     const handleNewMessage = (msg) => {
       if (activeChat && msg.chat === activeChat._id) {
-      setMessages((prev) => [...prev, msg]);
-    }
+        setMessages((prev) => [...prev, msg]);
+      }
 
-    // always update chat list ordering
-    setChats((prevChats) =>
-      prevChats.map((chat) =>
-        chat._id === msg.chat
-          ? { ...chat, lastMessage: msg }
-          : chat
-      )
-    );
-  };
+      // always update chat list ordering
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat._id === msg.chat ? { ...chat, lastMessage: msg } : chat
+        )
+      );
+    };
 
     socket.on("newMessage", handleNewMessage);
-      return () => socket.off("newMessage", handleNewMessage);
-}, [socket, activeChat]);
+    return () => socket.off("newMessage", handleNewMessage);
+  }, [socket, activeChat]);
 
   /* ---------------- SEND MESSAGE ---------------- */
   const sendMessage = () => {
-  if (!message.trim() || !activeChat) return;
+    if (!message.trim() || !activeChat) return;
 
-  // const tempMsg = {
-  //   _id: Date.now(),
-  //   sender: userId,
-  //   chat: activeChat._id,
-  //   content: message,
-  // };
+    // const tempMsg = {
+    //   _id: Date.now(),
+    //   sender: userId,
+    //   chat: activeChat._id,
+    //   content: message,
+    // };
 
-  // setMessages((prev) => [...prev, tempMsg]); // instant UI
+    // setMessages((prev) => [...prev, tempMsg]); // instant UI
 
-  socket.emit("sendMessage", {
-    chatId: activeChat._id,
-    content: message,
-  });
+    socket.emit("sendMessage", {
+      chatId: activeChat._id,
+      content: message,
+    });
 
-  setMessage("");
-};
-
+    setMessage("");
+  };
 
   /* ---------------- START CONVERSATION ---------------- */
   const startConversation = async () => {
@@ -159,12 +160,31 @@ export default function Home() {
     setSearchQuery("");
   };
 
+  const emojis = [
+    "😀",
+    "😄",
+    "😁",
+    "😂",
+    "🤣",
+    "😊",
+    "😍",
+    "😘",
+    "😎",
+    "🥳",
+    "😢",
+    "😭",
+    "😡",
+    "👍",
+    "👎",
+    "🙏",
+    "🔥",
+    "❤️",
+  ];
+
   return (
     <div className="h-screen flex bg-gray-50">
-
       {/* LEFT SIDEBAR */}
       <div className="w-96 bg-white border-r relative">
-
         {/* TOP BAR */}
         <div className="p-4 border-b flex items-center justify-between relative">
           <button onClick={() => setOpen(!open)}>
@@ -204,9 +224,7 @@ export default function Home() {
         {chats.length === 0 && (
           <div className="p-6 text-gray-500 text-center">
             <p>No conversations yet</p>
-            <p className="text-sm mt-1">
-              Start a chat using username or email
-            </p>
+            <p className="text-sm mt-1">Start a chat using username or email</p>
           </div>
         )}
 
@@ -232,7 +250,6 @@ export default function Home() {
 
       {/* RIGHT PANEL */}
       <div className="flex-1 flex flex-col">
-
         {/* HEADER */}
         <div className="px-6 py-4 border-b flex justify-between">
           <div className="font-semibold">
@@ -244,41 +261,80 @@ export default function Home() {
         </div>
 
         {/* MESSAGES */}
-        {/* MESSAGES */}
-<div className="flex-1 p-6 overflow-y-auto space-y-3">
-  {messages.map((msg) => {
-    const isOwnMessage = msg.sender === userId;
+        <div className="flex-1 p-6 overflow-y-auto space-y-3">
+          {messages.map((msg) => {
+            const isOwnMessage = msg.sender === userId;
 
-    return (
-      <div
-        key={msg._id}
-        className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
-      >
-        <div
-          className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
-            ${isOwnMessage
-              ? "bg-purple-600 text-white rounded-br-none"
-              : "bg-white text-gray-800 rounded-bl-none"
+            return (
+              <div
+                key={msg._id}
+                className={`flex ${
+                  isOwnMessage ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
+            ${
+              isOwnMessage
+                ? "bg-purple-600 text-white rounded-br-none"
+                : "bg-white text-gray-800 rounded-bl-none"
             }`}
-        >
-          {msg.content}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-    );
-  })}
-</div>
-
 
         {/* INPUT */}
         {activeChat && (
-          <div className="px-6 py-4 border-t flex gap-3">
+          <div className="px-6 py-4 border-t flex items-center gap-3 relative">
+            {/* EMOJI BUTTON */}
+            <button
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+              className="text-xl"
+            >
+              🙂
+            </button>
+
+            {/* EMOJI PICKER */}
+            {showEmojiPicker && (
+              <div className="absolute bottom-16 left-6 bg-white border shadow-lg rounded-lg p-3 grid grid-cols-6 gap-2 z-50">
+                {emojis.map((emoji) => (
+                  <button
+                    key={emoji}
+                    className="text-xl hover:scale-110 transition"
+                    onClick={() => {
+                      setMessage((prev) => prev + emoji);
+                      setShowEmojiPicker(false);
+                    }}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* MESSAGE INPUT */}
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              className="flex-1 px-4 py-2 bg-gray-100 rounded-full"
+              className="flex-1 px-4 py-2 bg-gray-100 rounded-full outline-none"
               placeholder="Message"
             />
+
+            {/* ATTACHMENT BUTTON */}
+            <button
+              className="text-xl"
+              title="Attach file"
+              onClick={() => alert("Attachments coming next 😉")}
+            >
+              📎
+            </button>
+
+            {/* SEND BUTTON */}
             <button
               onClick={sendMessage}
               className="bg-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center"
