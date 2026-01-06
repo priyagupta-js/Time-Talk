@@ -3,7 +3,7 @@ const router = express.Router();
 const Chat = require("../models/ChatModel");
 const authMiddleware = require("../middleware/auth");
 
-// 🔹 GET all chats for logged-in user
+//GET all chats for logged-in user
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const chats = await Chat.find({
