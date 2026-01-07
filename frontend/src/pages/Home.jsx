@@ -21,7 +21,6 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
     await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
@@ -61,7 +60,13 @@ export default function Home() {
       }
     )
       .then((res) => res.json())
-      .then(setMessages)
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setMessages(data);
+        } else {
+          setMessages([]);
+        }
+      })
       .catch(() => setMessages([]));
   }, [activeChat]);
 
@@ -151,10 +156,15 @@ export default function Home() {
         body: JSON.stringify({ userId: otherUser._id }),
       }
     );
+    const data = await chatRes.json();
+    const chat = data.chat;
 
-    const chat = await chatRes.json();
-
-    setChats((prev) => [chat, ...prev]);
+    // prevent duplicate in UI
+    setChats((prev) => {
+      const exists = prev.some((c) => c._id === chat._id);
+      if (exists) return prev;
+      return [chat, ...prev];
+    });
     setActiveChat(chat);
     setShowStartChat(false);
     setSearchQuery("");
@@ -263,7 +273,8 @@ export default function Home() {
         {/* MESSAGES */}
         <div className="flex-1 p-6 overflow-y-auto space-y-3">
           {messages.map((msg) => {
-            const isOwnMessage = msg.sender === userId;
+            const isOwnMessage =
+  msg.sender === userId || msg.sender?._id === userId;
 
             return (
               <div
