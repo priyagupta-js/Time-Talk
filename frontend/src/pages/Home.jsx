@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Menu, MoreVertical, Send } from "lucide-react";
+import { Menu, MoreVertical, Send, Plus } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,8 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  const [chatSearch, setChatSearch] = useState("");
+
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
     await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
@@ -41,6 +43,14 @@ export default function Home() {
     );
   };
 
+  /* ---------------- CHAT SEARCH FILTER ---------------- */
+  const filteredChats = chats.filter((chat) => {
+    const otherUser = getOtherUser(chat);
+    if (!otherUser?.name) return false;
+
+    return otherUser.name.toLowerCase().includes(chatSearch.toLowerCase());
+  });
+
   /* ---------------- GUARD ---------------- */
   if (!userId) {
     return (
@@ -50,22 +60,17 @@ export default function Home() {
     );
   }
 
+  /* ---------------- FETCH MESSAGES ---------------- */
   useEffect(() => {
     if (!activeChat) return;
 
     fetch(
       `${import.meta.env.VITE_BACKEND_API}/api/messages/${activeChat._id}`,
-      {
-        credentials: "include",
-      }
+      { credentials: "include" }
     )
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setMessages(data);
-        } else {
-          setMessages([]);
-        }
+        setMessages(Array.isArray(data) ? data : []);
       })
       .catch(() => setMessages([]));
   }, [activeChat]);
@@ -100,7 +105,6 @@ export default function Home() {
         setMessages((prev) => [...prev, msg]);
       }
 
-      // always update chat list ordering
       setChats((prevChats) =>
         prevChats.map((chat) =>
           chat._id === msg.chat ? { ...chat, lastMessage: msg } : chat
@@ -115,15 +119,6 @@ export default function Home() {
   /* ---------------- SEND MESSAGE ---------------- */
   const sendMessage = () => {
     if (!message.trim() || !activeChat) return;
-
-    // const tempMsg = {
-    //   _id: Date.now(),
-    //   sender: userId,
-    //   chat: activeChat._id,
-    //   content: message,
-    // };
-
-    // setMessages((prev) => [...prev, tempMsg]); // instant UI
 
     socket.emit("sendMessage", {
       chatId: activeChat._id,
@@ -156,15 +151,15 @@ export default function Home() {
         body: JSON.stringify({ userId: otherUser._id }),
       }
     );
+
     const data = await chatRes.json();
     const chat = data.chat;
 
-    // prevent duplicate in UI
     setChats((prev) => {
       const exists = prev.some((c) => c._id === chat._id);
-      if (exists) return prev;
-      return [chat, ...prev];
+      return exists ? prev : [chat, ...prev];
     });
+
     setActiveChat(chat);
     setShowStartChat(false);
     setSearchQuery("");
@@ -194,23 +189,30 @@ export default function Home() {
   return (
     <div className="h-screen flex bg-gray-50">
       {/* LEFT SIDEBAR */}
-      <div className="w-96 bg-white border-r relative">
+      <div className="w-1/3 bg-white border-r relative">
         {/* TOP BAR */}
-        <div className="p-4 border-b flex items-center justify-between relative">
-          <button onClick={() => setOpen(!open)}>
-            <Menu />
-          </button>
+        <div className="p-4 border-b relative">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setOpen(!open)}>
+              <Menu />
+            </button>
+            <input
+              value={chatSearch}
+              onChange={(e) => setChatSearch(e.target.value)}
+              placeholder="Search chats"
+              className="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <button
+              onClick={() => setShowStartChat(true)}
+              className="text-sm text-purple-600 font-medium"
+            >
+              <Plus />
+            </button>
+          </div>
 
-          <button
-            onClick={() => setShowStartChat(true)}
-            className="text-sm text-purple-600 font-medium"
-          >
-            New Chat
-          </button>
-
-          {/* DROPDOWN */}
+          {/* SEARCH BAR */}
           {open && (
-            <div className="absolute top-14 left-4 bg-white shadow-md rounded w-48 p-3 z-50">
+            <div className="absolute top-20 left-4 bg-white shadow-md rounded w-48 p-3 z-50">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold">
                   {user?.name?.[0] || "U"}
@@ -230,36 +232,34 @@ export default function Home() {
           )}
         </div>
 
-        {/* EMPTY STATE */}
-        {chats.length === 0 && (
-          <div className="p-6 text-gray-500 text-center">
-            <p>No conversations yet</p>
-            <p className="text-sm mt-1">Start a chat using username or email</p>
-          </div>
-        )}
-
         {/* CHAT LIST */}
-        {chats.map((chat) => {
-          const otherUser = getOtherUser(chat);
+        {filteredChats.length === 0 ? (
+          <div className="p-6 text-gray-500 text-center text-sm">
+            No user found
+          </div>
+        ) : (
+          filteredChats.map((chat) => {
+            const otherUser = getOtherUser(chat);
+            const isActive = activeChat?._id === chat._id;
 
-          return (
-            <div
-              key={chat._id}
-              onClick={() => setActiveChat(chat)}
-              className={`p-4 cursor-pointer ${
-                activeChat?._id === chat._id ? "bg-blue-50" : ""
-              }`}
-            >
-              <div className="font-semibold">
-                {otherUser?.name || "New Chat"}
+            return (
+              <div
+                key={chat._id}
+                onClick={() => setActiveChat(chat)}
+                className={`p-4 cursor-pointer transition
+                  ${isActive ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+              >
+                <div className="font-semibold">
+                  {otherUser?.name || "New Chat"}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="flex-1 flex flex-col">
+      <div className=" w-2/3 flex-1 flex flex-col">
         {/* HEADER */}
         <div className="px-6 py-4 border-b flex justify-between">
           <div className="font-semibold">
@@ -274,7 +274,7 @@ export default function Home() {
         <div className="flex-1 p-6 overflow-y-auto space-y-3">
           {messages.map((msg) => {
             const isOwnMessage =
-  msg.sender === userId || msg.sender?._id === userId;
+              msg.sender === userId || msg.sender?._id === userId;
 
             return (
               <div
