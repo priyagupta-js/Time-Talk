@@ -75,9 +75,10 @@ io.on("connection", async(socket) => {
 
    // JOIN CHAT ROOM
   socket.on("joinChat", (chatId) => {
+    if (!chatId) return;
     socket.join(chatId);
-    console.log(`User ${socket.userId} joined chat ${chatId}`);
   });
+
 
     // 🔹 SEND MESSAGE
   socket.on("sendMessage", async ({ chatId, content }) => {
