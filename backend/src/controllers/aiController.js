@@ -25,8 +25,6 @@ const handleAIChat = async (req, res) => {
   }
 };
 
-
-
 const handleAISuggestions = async (req, res) => {
   try {
     const { message } = req.body;
