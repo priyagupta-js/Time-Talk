@@ -29,7 +29,6 @@ export default function Home() {
   const [chatToDelete, setChatToDelete] = useState(null);
 
   const textareaRef = useRef(null);
-
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
     await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/logout`, {
