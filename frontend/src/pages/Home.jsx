@@ -11,7 +11,6 @@ export default function Home() {
   const navigate = useNavigate();
 
   const userId = user?._id || user?.id || null;
-
   const [chats, setChats] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [isAIChatActive, setIsAIChatActive] = useState(false); // ← new
