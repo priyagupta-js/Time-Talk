@@ -187,7 +187,6 @@ export default function Home() {
       alert("Failed to delete chat");
     }
   };
-
   /* ---- helper: open a human chat ---- */
   const openHumanChat = (chat) => {
     setActiveChat(chat);
