@@ -192,7 +192,6 @@ export default function Home() {
     setActiveChat(chat);
     setIsAIChatActive(false);
   };
-
   /* ---- helper: open AI chat ---- */
   const openAIChat = () => {
     setIsAIChatActive(true);
