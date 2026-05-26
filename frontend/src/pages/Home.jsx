@@ -197,7 +197,6 @@ export default function Home() {
     setIsAIChatActive(true);
     setActiveChat(null);
   };
-
   // Should we show the AI chat window?
   const showAIWindow = isAIChatActive;
   return (
