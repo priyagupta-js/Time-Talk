@@ -165,7 +165,6 @@ export default function Home() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-
   const confirmDeleteChat = async () => {
     if (!chatToDelete) return;
     try {
