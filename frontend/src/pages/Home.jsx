@@ -122,7 +122,6 @@ export default function Home() {
     setMessage("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
-
   /* ---------------- START CONVERSATION ---------------- */
   const startConversation = async () => {
     const userRes = await fetch(
