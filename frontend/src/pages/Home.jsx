@@ -61,7 +61,6 @@ export default function Home() {
       </div>
     );
   }
-
   /* ---------------- FETCH MESSAGES ---------------- */
   useEffect(() => {
     if (!activeChat) return;
